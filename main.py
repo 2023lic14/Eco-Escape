@@ -9,8 +9,11 @@ from kivy.uix.label import Label
 class ToolboxButton(Button):
     def __init__(self, passcode_callback=None, **kwargs):
         super(ToolboxButton, self).__init__(**kwargs)
-        self.background_normal = 'toolbox.png'
-        self.background_down = 'closerToolbox.png'
+        self.original_size = kwargs.get('size', (256, 256))  # Save the original size
+        self.original_image_normal = kwargs.get('background_normal', 'toolbox.png')  # Save the original image
+        self.original_image_down = kwargs.get('background_down', 'closerToolbox.png')  # Save the original image
+        self.background_normal = self.original_image_normal
+        self.background_down = self.original_image_down
         self.passcode_callback = passcode_callback
 
     def on_press(self):
@@ -29,7 +32,7 @@ class EscapeRoomApp(App):
 
         # Add the toolbox button with adjusted position
         self.toolbox_button = ToolboxButton(size_hint=(None, None), size=(256, 256), pos=(100, 700))
-        self.toolbox_button.bind(on_press=self.unlock_mode)
+        self.toolbox_button.bind(on_press=self.toggle_unlock_mode)
         layout.add_widget(self.toolbox_button)
 
         # Initialize TextInput as an instance variable and hide it initially
@@ -42,15 +45,40 @@ class EscapeRoomApp(App):
         Window.size = (800, 600)  # Set your desired width and height here
 
         # Add a Label to display passcode confirmation
-        self.passcode_label = Label(text='', pos=(400, 500), font_size=20)
+        self.passcode_label = Label(text='', pos=(400, 500), font_size=50)
         layout.add_widget(self.passcode_label)
 
+        # State variable to track whether the toolbox is unlocked
+        self.toolbox_unlocked = False
+
         return layout
+
+    def toggle_unlock_mode(self, instance):
+        if self.toolbox_unlocked:
+            # Move the toolbox back to the original position
+            self.toolbox_button.pos = (100, 700)
+            # Reset the size and image properties
+            self.toolbox_button.size = self.toolbox_button.original_size
+            self.toolbox_button.background_normal = self.toolbox_button.original_image_normal
+            self.toolbox_button.background_down = self.toolbox_button.original_image_down
+            self.toolbox_unlocked = False
+            # Hide the TextInput
+            self.text_input.pos = (-1000, -1000)
+            self.text_input.text = ''
+        else:
+            # Update the door appearance and position
+            instance.background_normal = 'closerToolbox.png'
+            instance.size = (1500, 1500)  # New size
+            instance.pos = (50, 0)  # New position
+            # Show the TextInput
+            self.text_input.pos = (instance.pos[0] + instance.width + 10, instance.pos[1])
+            self.text_input.focus = True
+            self.toolbox_unlocked = True
 
     def check_passcode(self, instance):
         # Check the entered passcode
         passcode = instance.text
-        if passcode == 'your_passcode':  # Replace 'your_passcode' with the actual passcode
+        if passcode == '12345':  # Replace 'your_passcode' with the actual passcode
             self.passcode_label.text = 'Correct passcode!'
             # Add your logic for unlocking the door or performing other actions
         else:
@@ -62,17 +90,7 @@ class EscapeRoomApp(App):
         instance.text = ''
 
         # Show the passcode confirmation label
-        self.passcode_label.pos = (650, 190)
-
-    def unlock_mode(self, instance):
-        # Update the door appearance and position
-        instance.background_normal = 'closerToolbox.png'
-        instance.size = (1500, 1500)  # New size
-        instance.pos = (50, 0)  # New position
-
-        # Show the TextInput
-        self.text_input.pos = (650, 200)
-        self.text_input.focus = True
+        self.passcode_label.pos = (0, -500)
 
 if __name__ == '__main__':
     EscapeRoomApp().run()
