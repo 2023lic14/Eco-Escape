@@ -5,6 +5,7 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 from kivy.uix.label import Label
+from kivy.clock import Clock
 
 class ToolboxButton(Button):
     def __init__(self, passcode_callback=None, **kwargs):
@@ -86,11 +87,17 @@ class EscapeRoomApp(App):
             # Add your logic for handling incorrect passcode
 
         # Reset the TextInput position
-        instance.pos = (-1000, -1000)
-        instance.text = ''
+        #instance.pos = (-1000, -1000)
+        #instance.text = ''
 
         # Show the passcode confirmation label
         self.passcode_label.pos = (0, -500)
+
+        Clock.schedule_once(self.reset_confirmation_label, 3.0)
+
+    def reset_confirmation_label(self, dt):
+        # Reset the text of the confirmation label
+        self.passcode_label.text = ''
 
 if __name__ == '__main__':
     EscapeRoomApp().run()
