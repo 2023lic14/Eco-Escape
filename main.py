@@ -79,13 +79,12 @@ class EscapeRoomApp(App):
             # Hide the TextInput
             self.text_input.pos = (-1000, -1000)
             self.text_input.text = ''
-            # Hide the door image
-            #self.door_image.opacity = 0
-            #self.toolbox_unlocked = False
             # Hide the door image if it's not the first time
             if not self.first_time_unlock:
                 self.door_image.opacity = 0
             self.toolbox_unlocked = False
+            # Make the radio button visible
+            self.radio_button.opacity = 1
         else:
             # Update the door appearance and position
             instance.background_normal = 'closerToolbox.png'
@@ -95,6 +94,8 @@ class EscapeRoomApp(App):
             self.text_input.pos = (instance.pos[0] + instance.width + 10, instance.pos[1])
             self.text_input.focus = True
             self.toolbox_unlocked = True
+            # Hide the radio button
+            self.radio_button.opacity = 0
 
     def check_passcode(self, instance):
         # Check the entered passcode
