@@ -10,6 +10,7 @@ from radio_button import RadioImageButton  # Import the new class
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.graphics import Rectangle, Color
 from kivy.animation import Animation
+from kivy.uix.boxlayout import BoxLayout
 
 class ToolboxButton(Button):
     def __init__(self, passcode_callback=None, **kwargs):
@@ -76,7 +77,15 @@ class EscapeRoomApp(App):
         self.second_toolbox_button.bind(on_press=self.toggle_second_unlock_mode)
         layout.add_widget(self.second_toolbox_button)
 
-
+        self.success_text_box_layout = BoxLayout(orientation='vertical', size_hint=(None, None),
+                                                 size=(400, 0), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        self.success_text_box = TextInput(text="You escaped! Learn more about conservation at [link]!", multiline=True,
+                                          readonly=True, font_size=40, background_color=(0, 0, 0, 0))
+        # Bind the height of the TextBox to its content
+        self.success_text_box.bind(height=self.adjust_text_box_size)
+        self.success_text_box_layout.add_widget(self.success_text_box)
+        self.success_text_box_layout.opacity = 0  # Initially hide the success TextBox
+        layout.add_widget(self.success_text_box_layout)
 
         return layout
 
@@ -141,6 +150,10 @@ class EscapeRoomApp(App):
             # Hide the radio button
             self.radio_button.opacity = 0
 
+    def adjust_text_box_size(self, instance, value):
+        # Adjust the size of the TextBox layout based on the content height
+        self.success_text_box_layout.height = self.success_text_box.minimum_height
+
     def check_passcode(self, instance):
         # Check the entered passcode
         passcode = instance.text
@@ -148,16 +161,22 @@ class EscapeRoomApp(App):
             self.passcode_label.text = 'Correct passcode!'
             # Add your logic for unlocking the door or performing other actions
             # Show the door image
-            #self.door_image.opacity = 1
+            # self.door_image.opacity = 1
             if self.first_time_unlock:
                 self.door_image.opacity = 1
                 self.first_time_unlock = False
                 # Schedule a function to hide the door image after 3 seconds (adjust as needed)
-            Clock.schedule_once(self.hide_door_image, 3.0)
+                Clock.schedule_once(self.hide_door_image, 3.0)
 
-        else:
-            self.passcode_label.text = 'Incorrect passcode!'
-            # Add your logic for handling incorrect passcode
+                # Display the success TextBox after 3 seconds
+                Clock.schedule_once(self.display_success_text_box, 3.0)
+            else:
+                self.passcode_label.text = 'Incorrect passcode!'
+                # Add your logic for handling incorrect passcode
+
+    def display_success_text_box(self, dt):
+        # Display the success TextBox
+        self.success_text_box_layout.opacity = 1
 
         # Reset the TextInput position
         #instance.pos = (-1000, -1000)
