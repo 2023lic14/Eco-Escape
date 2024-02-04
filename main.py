@@ -36,6 +36,10 @@ class EscapeRoomApp(App):
         self.toolbox_button.bind(on_press=self.toggle_unlock_mode)
         layout.add_widget(self.toolbox_button)
 
+        # Add the door image with adjusted position
+        self.door_image = Image(source='scissors.png', size=(500, 500), pos=(600, 300), opacity=0)
+        layout.add_widget(self.door_image)
+
         # Initialize TextInput as an instance variable and hide it initially
         self.text_input = TextInput(hint_text='Type in the code', multiline=False,
                                      size_hint=(None, None), size=(300, 60), pos=(-1000, -1000))
@@ -51,6 +55,8 @@ class EscapeRoomApp(App):
 
         # State variable to track whether the toolbox is unlocked
         self.toolbox_unlocked = False
+        # State variable to track whether the correct passcode has been entered for the first time
+        self.first_time_unlock = True
 
         return layout
 
@@ -66,6 +72,13 @@ class EscapeRoomApp(App):
             # Hide the TextInput
             self.text_input.pos = (-1000, -1000)
             self.text_input.text = ''
+            # Hide the door image
+            #self.door_image.opacity = 0
+            #self.toolbox_unlocked = False
+            # Hide the door image if it's not the first time
+            if not self.first_time_unlock:
+                self.door_image.opacity = 0
+            self.toolbox_unlocked = False
         else:
             # Update the door appearance and position
             instance.background_normal = 'closerToolbox.png'
@@ -82,6 +95,13 @@ class EscapeRoomApp(App):
         if passcode == '12345':  # Replace 'your_passcode' with the actual passcode
             self.passcode_label.text = 'Correct passcode!'
             # Add your logic for unlocking the door or performing other actions
+            # Show the door image
+            #self.door_image.opacity = 1
+            if self.first_time_unlock:
+                self.door_image.opacity = 1
+                self.first_time_unlock = False
+                # Schedule a function to hide the door image after 3 seconds (adjust as needed)
+            Clock.schedule_once(self.hide_door_image, 3.0)
 
         else:
             self.passcode_label.text = 'Incorrect passcode!'
@@ -99,6 +119,14 @@ class EscapeRoomApp(App):
     def reset_confirmation_label(self, dt):
         # Reset the text of the confirmation label
         self.passcode_label.text = ''
+
+    #def hide_door_image(self, dt):
+        # Hide the door image
+        #self.door_image.opacity = 0
+    def hide_door_image(self, dt):
+        # Hide the door image if it's not the first time
+        if not self.first_time_unlock:
+            self.door_image.opacity = 0
 
 if __name__ == '__main__':
     EscapeRoomApp().run()
