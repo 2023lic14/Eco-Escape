@@ -65,11 +65,51 @@ class EscapeRoomApp(App):
 
         # State variable to track whether the toolbox is unlocked
         self.toolbox_unlocked = False
+        self.second_toolbox_unlocked = False
 
         # State variable to track whether the correct passcode has been entered for the first time
         self.first_time_unlock = True
 
+        self.second_toolbox_button = ToolboxButton(size_hint=(None, None), size=(256, 256), pos=(1300, 100),
+                                                   background_normal='fish.png',
+                                                   background_down='hook.png')
+        self.second_toolbox_button.bind(on_press=self.toggle_second_unlock_mode)
+        layout.add_widget(self.second_toolbox_button)
+
+
+
         return layout
+
+    def toggle_second_unlock_mode(self, instance):
+        # Similar logic to toggle_unlock_mode but for the second toolbox button
+        if not self.second_toolbox_unlocked:
+            # Update the appearance and position of the second toolbox
+            instance.background_normal = 'hook.png'
+            instance.size = (1500, 1500)  # New size
+            instance.pos = (50, 0)  # New position
+            # Hide the text input if the image is changing to 'hook.png'
+            if instance.background_normal == 'hook.png':
+                self.text_input.pos = (-1000, -1000)
+                self.text_input.text = ''
+            else:
+                # Show the TextInput for the second toolbox
+                self.text_input.pos = (instance.pos[0] + instance.width + 10, instance.pos[1])
+                self.text_input.focus = True
+            self.second_toolbox_unlocked = True
+            # Hide the radio button
+            self.radio_button.opacity = 0
+
+            # Schedule a function to revert the appearance after 5 seconds
+            Clock.schedule_once(lambda dt: self.revert_toolbox_appearance(instance), 5.0)
+
+    def revert_toolbox_appearance(self, instance):
+        # Revert the appearance of the second toolbox to its original state 'fish.png'
+        instance.background_normal = 'fish.png'
+        instance.size = (256, 256)  # Original size
+        instance.pos = (1300, 300)  # Original position
+        self.second_toolbox_unlocked = False
+        # Show the radio button
+        self.radio_button.opacity = 1
 
     def toggle_unlock_mode(self, instance):
         if self.toolbox_unlocked:
