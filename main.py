@@ -6,6 +6,7 @@ from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.clock import Clock
+from radio_button import RadioImageButton  # Import the new class
 
 class ToolboxButton(Button):
     def __init__(self, passcode_callback=None, **kwargs):
@@ -39,6 +40,11 @@ class EscapeRoomApp(App):
         # Add the door image with adjusted position
         self.door_image = Image(source='scissors.png', size=(500, 500), pos=(600, 300), opacity=0)
         layout.add_widget(self.door_image)
+
+        # Add the new image button (using RadioImageButton instead of RadioButton)
+        self.radio_button = RadioImageButton(size_hint=(None, None), size=(200, 200), pos=(400, 400))
+        self.radio_button.bind(on_press=self.on_radio_button_press)
+        layout.add_widget(self.radio_button)
 
         # Initialize TextInput as an instance variable and hide it initially
         self.text_input = TextInput(hint_text='Type in the code', multiline=False,
@@ -128,6 +134,13 @@ class EscapeRoomApp(App):
         # Hide the door image if it's not the first time
         if not self.first_time_unlock:
             self.door_image.opacity = 0
+
+    def on_radio_button_press(self, instance):
+        instance.toggle_unlock_mode()  # Toggle between states
+        parent = instance.parent
+        parent.remove_widget(instance)
+        parent.add_widget(instance)
+
 
 if __name__ == '__main__':
     EscapeRoomApp().run()
