@@ -7,6 +7,9 @@ from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.clock import Clock
 from radio_button import RadioImageButton  # Import the new class
+from kivy.uix.relativelayout import RelativeLayout
+from kivy.graphics import Rectangle, Color
+from kivy.animation import Animation
 
 class ToolboxButton(Button):
     def __init__(self, passcode_callback=None, **kwargs):
@@ -38,7 +41,7 @@ class EscapeRoomApp(App):
         layout.add_widget(self.toolbox_button)
 
         # Add the door image with adjusted position
-        self.door_image = Image(source='scissors.png', size=(500, 500), pos=(600, 300), opacity=0)
+        self.door_image = Image(source='scissors.png', size=(500, 500), pos=(300, 200), opacity=0)
         layout.add_widget(self.door_image)
 
         # Add the new image button (using RadioImageButton instead of RadioButton)
@@ -47,6 +50,7 @@ class EscapeRoomApp(App):
         layout.add_widget(self.radio_button)
 
         # Initialize TextInput as an instance variable and hide it initially
+
         self.text_input = TextInput(hint_text='Type in the code', multiline=False,
                                      size_hint=(None, None), size=(300, 60), pos=(-1000, -1000))
         self.text_input.bind(on_text_validate=self.check_passcode)  # Bind on_text_validate event
@@ -100,7 +104,7 @@ class EscapeRoomApp(App):
     def check_passcode(self, instance):
         # Check the entered passcode
         passcode = instance.text
-        if passcode == '12345':  # Replace 'your_passcode' with the actual passcode
+        if passcode == '700':  # Replace 'your_passcode' with the actual passcode
             self.passcode_label.text = 'Correct passcode!'
             # Add your logic for unlocking the door or performing other actions
             # Show the door image

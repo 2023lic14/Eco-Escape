@@ -4,6 +4,8 @@ from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.properties import BooleanProperty
 from kivy.core.window import Window
+from kivy.clock import Clock
+from kivy.metrics import dp
 
 class RadioImageButton(Image):
     def __init__(self, original_size=(200, 200), original_pos=(400, 400), **kwargs):
@@ -95,6 +97,8 @@ class RadioImageButton(Image):
         if len(self.key_sequence) == 4:
             if self.key_sequence == [274, 274, 273, 273]:  # Check for "down", "down", "up", "up"
                 self.textbox.text = "Correct!"
+                Clock.schedule_once(self.hide_confirmation, 3)  # Schedule hiding confirmation after 3 seconds
+                Clock.schedule_once(self.show_additional_text, 3)  # Schedule showing additional text after 3 seconds
             else:
                 self.textbox.text = "Incorrect!"
 
@@ -104,4 +108,24 @@ class RadioImageButton(Image):
             self.textbox.opacity = 1
             # Reset key sequence after displaying the message
             self.key_sequence = []
+
+    def hide_confirmation(self, dt):
+        # Hide the confirmation text box
+        self.textbox.opacity = 0
+
+    def show_additional_text(self, dt):
+        # Show the additional text
+        additional_text = "Seven-hundred species are endangered because of ocean plastic pollution..."
+        self.textbox.text = additional_text
+        text_width = dp(len(additional_text)) * 8  # Assuming an average character width of 8dp
+        text_height = 100  # Set an appropriate height
+        self.textbox.size = (text_width, text_height)
+        self.textbox.pos = (Window.width / 2 - text_width / 2,
+                            Window.height / 2 - text_height / 2 - 200)  # Move up by 200 pixels
+        self.textbox.opacity = 1
+        Clock.schedule_once(self.hide_additional_text, 3)  # Schedule hiding additional text after 3 seconds
+
+    def hide_additional_text(self, dt):
+        # Hide the additional text
+        self.textbox.opacity = 0
 
