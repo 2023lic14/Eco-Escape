@@ -82,6 +82,7 @@ class EscapeRoomApp(App):
         if passcode == '12345':  # Replace 'your_passcode' with the actual passcode
             self.passcode_label.text = 'Correct passcode!'
             # Add your logic for unlocking the door or performing other actions
+
         else:
             self.passcode_label.text = 'Incorrect passcode!'
             # Add your logic for handling incorrect passcode
