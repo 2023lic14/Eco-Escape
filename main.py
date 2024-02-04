@@ -79,7 +79,7 @@ class EscapeRoomApp(App):
 
         self.success_text_box_layout = BoxLayout(orientation='vertical', size_hint=(None, None),
                                                  size=(400, 0), pos_hint={'center_x': 0.5, 'center_y': 0.5})
-        self.success_text_box = TextInput(text="You escaped! Learn more about conservation on out website!", multiline=True,
+        self.success_text_box = TextInput(text="You escaped! Learn more about conservation on our website!", multiline=True,
                                           readonly=True, font_size=40, background_color=(0, 0, 0, 0))
         # Bind the height of the TextBox to its content
         self.success_text_box.bind(height=self.adjust_text_box_size)
