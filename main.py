@@ -71,7 +71,7 @@ class EscapeRoomApp(App):
         # State variable to track whether the correct passcode has been entered for the first time
         self.first_time_unlock = True
 
-        self.second_toolbox_button = ToolboxButton(size_hint=(None, None), size=(256, 256), pos=(1300, 100),
+        self.second_toolbox_button = ToolboxButton(size_hint=(None, None), size=(256, 256), pos=(1700, 100),
                                                    background_normal='fish.png',
                                                    background_down='hook.png')
         self.second_toolbox_button.bind(on_press=self.toggle_second_unlock_mode)
@@ -79,7 +79,7 @@ class EscapeRoomApp(App):
 
         self.success_text_box_layout = BoxLayout(orientation='vertical', size_hint=(None, None),
                                                  size=(400, 0), pos_hint={'center_x': 0.5, 'center_y': 0.5})
-        self.success_text_box = TextInput(text="You escaped! Learn more about conservation at [link]!", multiline=True,
+        self.success_text_box = TextInput(text="You escaped! Learn more about conservation on out website!", multiline=True,
                                           readonly=True, font_size=40, background_color=(0, 0, 0, 0))
         # Bind the height of the TextBox to its content
         self.success_text_box.bind(height=self.adjust_text_box_size)
@@ -87,7 +87,25 @@ class EscapeRoomApp(App):
         self.success_text_box_layout.opacity = 0  # Initially hide the success TextBox
         layout.add_widget(self.success_text_box_layout)
 
+        initial_text_label = Label(text="A fishnet... I need to get out of here...",
+                                   font_size=20, size_hint=(None, None), size=(400, 100),
+                                   pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        layout.add_widget(initial_text_label)
+
+        # Schedule a function to hide the initial story Label after 10 seconds
+        Clock.schedule_once(lambda dt: self.hide_initial_text_label(initial_text_label), 10.0)
+
+        # ... (rest of your layout)
+
         return layout
+
+    def hide_initial_text_label(self, label):
+        # Hide the initial story Label
+        label.opacity = 0
+
+    def adjust_text_box_size(self, instance, value):
+        # Adjust the size of the TextBox layout based on its content height
+        instance.parent.size = (400, value)
 
     def toggle_second_unlock_mode(self, instance):
         # Similar logic to toggle_unlock_mode but for the second toolbox button
@@ -115,7 +133,7 @@ class EscapeRoomApp(App):
         # Revert the appearance of the second toolbox to its original state 'fish.png'
         instance.background_normal = 'fish.png'
         instance.size = (256, 256)  # Original size
-        instance.pos = (1300, 300)  # Original position
+        instance.pos = (1700, 300)  # Original position
         self.second_toolbox_unlocked = False
         # Show the radio button
         self.radio_button.opacity = 1
