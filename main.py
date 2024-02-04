@@ -55,6 +55,7 @@ class EscapeRoomApp(App):
 
         # State variable to track whether the toolbox is unlocked
         self.toolbox_unlocked = False
+
         # State variable to track whether the correct passcode has been entered for the first time
         self.first_time_unlock = True
 
